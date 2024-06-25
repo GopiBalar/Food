@@ -1,19 +1,18 @@
-import React, { children, createContext, useState } from "react";
+import React, { children, createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const GlobalStateContext = createContext(null);
 
 function Context({ children }) {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState("burger");
   const [loading, setLoading] = useState(false);
-  const [foodData, setFoodData] = useState(false);
+  const [foodData, setFoodData] = useState(true);
   const [foodDetails, setFoodDetails] = useState(null);
   const [favouriteList, setFavouriteList] = useState([]);
 
   const navigate = useNavigate(null);
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+  async function dataFetch() {
     try {
       setLoading(true);
       const res = await fetch(
@@ -30,6 +29,15 @@ function Context({ children }) {
       console.log("err", err);
       setLoading(false);
     }
+  }
+
+  useEffect(() => {
+    dataFetch();
+  }, []);
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    dataFetch();
   }
 
   function handleAddFavourits(getCurrentItem) {
